@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Specter - Gherkin test cases, written automatically</title>
+<meta name="description" content="Specter watches your Jira tasks and generates Gherkin test scenarios using AI. No server required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500&family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700&family=Lora:ital,wght@0,400;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+:root{--white:#fff;--off:#fafafa;--surface:#f4f5f7;--border:#e4e7ed;--border2:#d0d5de;--ink:#0d1117;--ink2:#3d4657;--ink3:#7a8399;--ink4:#b0b8c8;--blue:#1a56db;--blue-lt:#eff4ff;--blue-mid:#c7d9ff;--green:#047857;--green-lt:#ecfdf5;--sans:'Bricolage Grotesque',sans-serif;--mono:'Geist Mono',monospace;--serif:'Lora',serif;--r:8px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--white);color:var(--ink);font-family:var(--sans);font-weight:300;line-height:1.6;-webkit-font-smoothing:antialiased}
+nav{position:sticky;top:0;z-index:100;height:58px;display:flex;align-items:center;padding:0 48px;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-mark{width:26px;height:26px;border-radius:6px;background:var(--ink);display:flex;align-items:center;justify-content:center}
+.nav-mark svg{width:14px;height:14px}
+.nav-name{font-family:var(--mono);font-size:14px;font-weight:500;color:var(--ink);letter-spacing:-.01em}
+.nav-links{display:flex;gap:32px;list-style:none;align-items:center}
+.nav-links a{font-size:13px;font-weight:400;color:var(--ink2);text-decoration:none;transition:color .15s}
+.nav-links a:hover{color:var(--ink)}
+.nav-btn{padding:7px 18px;background:var(--ink);color:var(--white)!important;border-radius:6px;font-size:13px!important;font-weight:500!important;transition:background .15s!important}
+.nav-btn:hover{background:var(--blue)!important}
+.hero{padding:88px 48px 80px;max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;padding:4px 12px 4px 6px;background:var(--blue-lt);border:1px solid var(--blue-mid);border-radius:100px;font-family:var(--mono);font-size:11px;color:var(--blue);margin-bottom:28px;letter-spacing:.04em;animation:fadeUp .5s ease both}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--blue)}
+h1{font-family:var(--sans);font-size:clamp(36px,4.5vw,58px);font-weight:700;line-height:1.08;letter-spacing:-.035em;margin-bottom:20px;animation:fadeUp .5s .07s ease both;color:var(--ink)}
+h1 .accent{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--blue)}
+.hero-sub{font-size:17px;color:var(--ink2);line-height:1.7;max-width:480px;margin-bottom:36px;animation:fadeUp .5s .14s ease both;font-weight:300}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;animation:fadeUp .5s .21s ease both}
+.btn-cta{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;background:var(--blue);color:var(--white);border-radius:var(--r);font-size:14px;font-weight:600;text-decoration:none;transition:all .15s;letter-spacing:-.01em}
+.btn-cta:hover{background:#1648c4;transform:translateY(-1px);box-shadow:0 4px 16px rgba(26,86,219,.25)}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;background:transparent;color:var(--ink2);border-radius:var(--r);font-size:14px;font-weight:500;text-decoration:none;transition:all .15s;border:1px solid var(--border2)}
+.btn-ghost:hover{border-color:var(--ink2);color:var(--ink);background:var(--surface)}
+.hero-compat{margin-top:28px;display:flex;align-items:center;gap:16px;animation:fadeUp .5s .28s ease both}
+.compat-label{font-size:12px;color:var(--ink4);font-family:var(--mono)}
+.compat-items{display:flex;gap:14px;flex-wrap:wrap}
+.compat-item{font-family:var(--mono);font-size:12px;color:var(--ink3)}
+.hero-right{animation:fadeUp .5s .18s ease both}
+.terminal{background:var(--ink);border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(13,17,23,.14),0 4px 16px rgba(13,17,23,.08)}
+.t-bar{display:flex;align-items:center;gap:8px;padding:13px 18px;background:#1a1f2e;border-bottom:1px solid rgba(255,255,255,.06)}
+.t-dots{display:flex;gap:6px}
+.t-dots span{width:10px;height:10px;border-radius:50%}
+.t-title{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.3);flex:1;text-align:center;letter-spacing:.06em}
+.t-body{padding:22px 24px;font-family:var(--mono);font-size:12.5px;line-height:1.9}
+.t-ln{display:block}
+.t-prompt{color:rgba(255,255,255,.2)}
+.t-cmd{color:#e2e8f0}
+.t-dim{color:rgba(255,255,255,.25)}
+.t-info{color:#60a5fa}
+.t-ok{color:#34d399}
+.t-skip{color:rgba(255,255,255,.3)}
+.t-key{color:#93c5fd}
+.t-warn{color:#fbbf24}
+.t-done{color:#34d399;font-weight:500}
+.t-count{color:#e2e8f0}
+.t-muted{color:rgba(255,255,255,.25)}
+.section{padding:88px 48px}
+.section-inner{max-width:1160px;margin:0 auto}
+.section-alt{background:var(--off);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--blue);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+.section-title{font-family:var(--sans);font-size:clamp(28px,3.2vw,44px);font-weight:700;line-height:1.1;letter-spacing:-.03em;margin-bottom:14px;color:var(--ink)}
+.section-title em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--blue)}
+.section-lead{font-size:16px;color:var(--ink2);line-height:1.72;max-width:520px;margin-bottom:56px;font-weight:300}
+.props-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.prop{padding:36px 32px;background:var(--white);transition:background .2s}
+.prop:hover{background:var(--off)}
+.prop-num{font-family:var(--mono);font-size:11px;color:var(--ink4);letter-spacing:.1em;margin-bottom:20px;display:block}
+.prop-title{font-size:17px;font-weight:600;color:var(--ink);margin-bottom:10px;letter-spacing:-.02em;line-height:1.3}
+.prop-text{font-size:14px;color:var(--ink2);line-height:1.65;font-weight:300}
+.steps-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative}
+.steps-row::before{content:'';position:absolute;top:20px;left:calc(12.5% + 20px);right:calc(12.5% + 20px);height:1px;background:var(--border2);z-index:0}
+.step-item{padding:0 24px;position:relative;z-index:1}
+.step-num{width:40px;height:40px;border-radius:50%;background:var(--white);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:500;color:var(--ink2);margin-bottom:20px}
+.step-item.active .step-num{background:var(--blue);border-color:var(--blue);color:var(--white)}
+.step-title{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px;letter-spacing:-.015em}
+.step-desc{font-size:13px;color:var(--ink2);line-height:1.6;font-weight:300}
+.step-tag{display:inline-block;margin-top:12px;font-family:var(--mono);font-size:10px;color:var(--ink3);background:var(--surface);border:1px solid var(--border);padding:3px 9px;border-radius:4px;letter-spacing:.05em}
+.showcase{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.showcase-features{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:8px}
+.feat-row{display:flex;align-items:flex-start;gap:14px;padding:18px 20px;border-bottom:1px solid var(--border);transition:background .15s}
+.feat-row:last-child{border-bottom:none}
+.feat-row:hover{background:var(--off)}
+.feat-check{width:18px;height:18px;border-radius:50%;background:var(--green-lt);border:1px solid #6ee7b7;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.feat-check svg{width:9px;height:9px;color:var(--green)}
+.feat-text{font-size:14px;color:var(--ink2);line-height:1.5}
+.feat-text strong{display:block;font-weight:600;color:var(--ink);font-size:13px;margin-bottom:2px}
+.gherkin-wrap{background:var(--off);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.gherkin-top{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--white);border-bottom:1px solid var(--border)}
+.gherkin-file{font-family:var(--mono);font-size:11px;color:var(--ink3)}
+.gherkin-badge{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:4px;background:var(--green-lt);color:var(--green);border:1px solid #6ee7b7;letter-spacing:.05em}
+.gherkin-body{padding:20px 22px;font-family:var(--mono);font-size:12.5px;line-height:1.85;color:var(--ink)}
+.gh-tag{color:#6366f1}
+.gh-kw{color:var(--blue);font-weight:500}
+.gh-step{color:#0369a1}
+.gh-val{color:var(--green)}
+.arch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.arch-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:28px;transition:all .2s;position:relative;overflow:hidden}
+.arch-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--card-top,var(--blue));opacity:0;transition:opacity .2s}
+.arch-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.arch-card:hover::after{opacity:1}
+.arch-layer{font-family:var(--mono);font-size:10px;color:var(--card-color,var(--blue));letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.arch-card h3{font-size:18px;font-weight:700;color:var(--ink);margin-bottom:10px;letter-spacing:-.02em}
+.arch-card p{font-size:13px;color:var(--ink2);line-height:1.62;margin-bottom:18px;font-weight:300}
+.arch-items{list-style:none;display:flex;flex-direction:column;gap:6px}
+.arch-items li{font-family:var(--mono);font-size:11.5px;color:var(--ink3);display:flex;align-items:baseline;gap:8px}
+.arch-items li::before{content:'-';color:var(--card-color,var(--blue));font-size:10px;flex-shrink:0}
+.outputs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.out-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:26px;transition:all .2s}
+.out-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.06);border-color:var(--border2)}
+.out-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.out-card h4{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px;letter-spacing:-.01em}
+.out-card p{font-size:13px;color:var(--ink2);line-height:1.6;margin-bottom:16px;font-weight:300}
+.out-modes{display:flex;flex-direction:column;gap:5px}
+.out-mode{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--ink3)}
+.mode-pip{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.providers-split{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.provider-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.prov-card{display:flex;align-items:center;gap:16px;padding:16px 20px;border:1px solid var(--border);border-radius:8px;background:var(--white);transition:all .2s}
+.prov-card:hover{border-color:var(--border2);background:var(--off)}
+.prov-card.rec{border-color:var(--blue-mid);background:var(--blue-lt)}
+.prov-name{font-size:14px;font-weight:600;color:var(--ink);flex:1}
+.prov-model{font-family:var(--mono);font-size:11px;color:var(--ink3)}
+.prov-rec{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:4px;background:var(--blue);color:var(--white);letter-spacing:.05em}
+.checklist{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.check-item{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);font-size:13px;color:var(--ink2);transition:background .15s}
+.check-item:last-child{border-bottom:none}
+.check-item:hover{background:var(--off)}
+.ci-icon{width:18px;height:18px;border-radius:50%;background:var(--green-lt);border:1px solid #6ee7b7;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ci-icon svg{width:9px;height:9px;color:var(--green)}
+.code-block{background:var(--ink);border-radius:10px;overflow:hidden;font-family:var(--mono);font-size:13px;line-height:1.75}
+.cb-top{display:flex;align-items:center;justify-content:space-between;padding:11px 18px;background:#1a1f2e;border-bottom:1px solid rgba(255,255,255,.06)}
+.cb-dots{display:flex;gap:6px}
+.cb-dots span{width:9px;height:9px;border-radius:50%}
+.cb-file{font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.06em}
+.cb-body{padding:20px 22px;overflow-x:auto}
+.cb-body pre{white-space:pre}
+.ck{color:#93c5fd}
+.cs{color:#86efac}
+.cc{color:rgba(255,255,255,.28);font-style:italic}
+.cn{color:#bfdbfe}
+.cv{color:#fde68a}
+.cta-section{padding:88px 48px;background:var(--ink);text-align:center}
+.cta-inner{max-width:600px;margin:0 auto}
+.cta-section .eyebrow{color:#60a5fa}
+.cta-section h2{font-family:var(--sans);font-size:clamp(28px,3.5vw,44px);font-weight:700;letter-spacing:-.03em;line-height:1.1;color:var(--white);margin-bottom:16px}
+.cta-section h2 em{font-family:var(--serif);font-style:italic;font-weight:400;color:#93c5fd}
+.cta-section p{font-size:16px;color:rgba(255,255,255,.55);line-height:1.7;margin-bottom:36px;font-weight:300}
+.cta-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-cta-white{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;background:var(--white);color:var(--ink);border-radius:var(--r);font-size:14px;font-weight:600;text-decoration:none;transition:all .15s;letter-spacing:-.01em}
+.btn-cta-white:hover{background:#f0f4ff;transform:translateY(-1px)}
+.btn-ghost-white{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;background:transparent;color:rgba(255,255,255,.65);border-radius:var(--r);font-size:14px;font-weight:500;text-decoration:none;transition:all .15s;border:1px solid rgba(255,255,255,.15)}
+.btn-ghost-white:hover{border-color:rgba(255,255,255,.35);color:var(--white)}
+footer{padding:40px 48px;border-top:1px solid var(--border);background:var(--white)}
+.footer-inner{max-width:1160px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.footer-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.footer-mark{width:22px;height:22px;border-radius:5px;background:var(--ink);display:flex;align-items:center;justify-content:center}
+.footer-mark svg{width:12px;height:12px}
+.footer-name{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--ink2)}
+.footer-links{display:flex;gap:24px}
+.footer-links a{font-size:13px;color:var(--ink3);text-decoration:none;transition:color .15s}
+.footer-links a:hover{color:var(--ink2)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+.reveal.in{opacity:1;transform:none}
+.d1{transition-delay:.08s}
+.d2{transition-delay:.16s}
+@media(max-width:960px){nav{padding:0 24px}.hero{grid-template-columns:1fr;padding:60px 24px}.hero-right{display:none}.section{padding:64px 24px}.props-grid{grid-template-columns:1fr}.steps-row{grid-template-columns:1fr 1fr;gap:32px}.steps-row::before{display:none}.showcase{grid-template-columns:1fr}.arch-grid{grid-template-columns:1fr}.outputs-grid{grid-template-columns:1fr}.providers-split{grid-template-columns:1fr}.cta-section{padding:64px 24px}footer{padding:32px 24px}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="nav-mark"><svg viewBox="0 0 14 14" fill="none"><path d="M7 1L11.5 4v6L7 13 2.5 10V4L7 1z" stroke="white" stroke-width="1.2"/><circle cx="7" cy="7" r="1.5" fill="white"/></svg></div>
+    <span class="nav-name">specter</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#how-it-works">How it works</a></li>
+    <li><a href="#architecture">Architecture</a></li>
+    <li><a href="#outputs">Outputs</a></li>
+    <li><a href="docs.html">Docs</a></li>
+    <li><a href="https://github.com/your-org/specter" class="nav-btn">GitHub</a></li>
+  </ul>
+</nav>
+
+<section style="background:var(--white)">
+  <div class="hero">
+    <div class="hero-left">
+      <!-- <div class="hero-badge"><div class="badge-dot"></div>Open source &nbsp;·&nbsp; No server &nbsp;·&nbsp; GitHub Actions</div> -->
+      <h1>Gherkin test cases,<br><span class="accent">written automatically.</span></h1>
+      <p class="hero-sub">Specter watches your Jira tasks and generates comprehensive test scenarios - happy paths, edge cases, negative tests - saving them wherever your team needs them.</p>
+      <div class="hero-actions">
+        <a href="docs.html" class="btn-cta">Get started <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        <!-- <a href="https://github.com/your-org/specter" class="btn-ghost"><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>View on GitHub</a> -->
+      </div>
+      <div class="hero-compat">
+        <span class="compat-label">Works with</span>
+        <div class="compat-items">
+          <span class="compat-item">Jira Cloud</span>
+          <span class="compat-item" style="color:var(--ink4)">·</span>
+          <span class="compat-item">Claude AI</span>
+          <span class="compat-item" style="color:var(--ink4)">·</span>
+          <span class="compat-item">GPT-4o</span>
+          <span class="compat-item" style="color:var(--ink4)">·</span>
+          <span class="compat-item">Azure OpenAI</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="terminal">
+        <div class="t-bar"><div class="t-dots"><span style="background:#f87171"></span><span style="background:#fbbf24"></span><span style="background:#34d399"></span></div><span class="t-title">specter - zsh</span><span></span></div>
+        <div class="t-body">
+          <span class="t-ln"><span class="t-prompt">$</span><span class="t-cmd"> python main.py all</span></span>
+          <span class="t-ln t-dim"> </span>
+          <span class="t-ln"><span class="t-info">Specter  ·  claude-sonnet-4  ·  PROJ</span></span>
+          <span class="t-ln"><span class="t-dim">Fetching 24 issues...</span></span>
+          <span class="t-ln t-dim"> </span>
+          <span class="t-ln"><span class="t-ok">+</span>  <span class="t-key">PROJ-241</span>  <span class="t-dim">User Registration      </span>  <span class="t-ok">generated</span></span>
+          <span class="t-ln"><span class="t-ok">+</span>  <span class="t-key">PROJ-235</span>  <span class="t-dim">Payment Checkout Flow  </span>  <span class="t-ok">generated</span></span>
+          <span class="t-ln"><span class="t-ok">+</span>  <span class="t-key">PROJ-228</span>  <span class="t-dim">Password Reset         </span>  <span class="t-ok">generated</span></span>
+          <span class="t-ln"><span class="t-warn">–</span>  <span class="t-key">PROJ-220</span>  <span class="t-dim">Search Autocomplete    </span>  <span class="t-skip">skipped</span></span>
+          <span class="t-ln"><span class="t-ok">+</span>  <span class="t-key">PROJ-214</span>  <span class="t-dim">Email Notifications    </span>  <span class="t-ok">generated</span></span>
+          <span class="t-ln t-dim"> </span>
+          <span class="t-ln"><span class="t-done">Done</span>  <span class="t-count">19 generated</span>  <span class="t-muted">·  5 skipped  ·  47s</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-inner">
+    <div class="eyebrow reveal">Why Specter</div>
+    <h2 class="section-title reveal">Your QA team writes scenarios.<br><em>Specter handles the first draft.</em></h2>
+    <p class="section-lead reveal">Stop spending hours on boilerplate. Specter generates a comprehensive starting point for every task so engineers focus on logic, not scaffolding.</p>
+    <div class="props-grid reveal">
+      <div class="prop"><span class="prop-num">01</span><div class="prop-title">No server to maintain</div><div class="prop-text">Runs entirely on GitHub Actions. A cron job polls Jira every 30 minutes. No infrastructure, no DevOps, no hosting costs.</div></div>
+      <div class="prop"><span class="prop-num">02</span><div class="prop-title">Pluggable at every layer</div><div class="prop-text">Switch LLM providers in one config line. Add new output destinations in 20 lines of Python. Built to grow with your stack.</div></div>
+      <div class="prop"><span class="prop-num">03</span><div class="prop-title">Smart deduplication</div><div class="prop-text">Tracks which tasks were processed and when. Re-generates only when description or comments actually changed.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt" id="how-it-works">
+  <div class="section-inner">
+    <div class="eyebrow reveal">How it works</div>
+    <h2 class="section-title reveal">Four steps. <em>Zero manual work.</em></h2>
+    <p class="section-lead reveal">Specter runs automatically. Commit config.yml, push, and never think about it again.</p>
+    <div class="steps-row reveal">
+      <div class="step-item active"><div class="step-num">01</div><div class="step-title">Watch Jira</div><div class="step-desc">Polls your project every 30 minutes. Uses the Jira changelog API to detect exactly which fields changed.</div><span class="step-tag">JQL + changelog</span></div>
+      <div class="step-item"><div class="step-num">02</div><div class="step-title">Parse content</div><div class="step-desc">Extracts summary, description, and all comments. Converts Atlassian Document Format to clean plain text.</div><span class="step-tag">ADF parser</span></div>
+      <div class="step-item"><div class="step-num">03</div><div class="step-title">Generate Gherkin</div><div class="step-desc">Sends task content to your chosen LLM. Receives structured Gherkin covering happy path, edge cases, and negative scenarios.</div><span class="step-tag">Claude / GPT-4o</span></div>
+      <div class="step-item"><div class="step-num">04</div><div class="step-title">Save results</div><div class="step-desc">Creates a Jira subtask, writes a .feature file, posts to Slack, or all three simultaneously.</div><span class="step-tag">Jira · File · Slack</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="example">
+  <div class="section-inner">
+    <div class="showcase">
+      <div>
+        <div class="eyebrow reveal">Generated output</div>
+        <h2 class="section-title reveal">What Specter<br><em>actually produces</em></h2>
+        <p class="section-lead reveal" style="margin-bottom:28px">Every generated file includes scenarios your team would write - not just the obvious happy path.</p>
+        <div class="showcase-features reveal">
+          <div class="feat-row"><div class="feat-check"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5l2.5 2.5L8 3"/></svg></div><div class="feat-text"><strong>Happy path scenario</strong>The core flow from the task description, in correct Gherkin syntax.</div></div>
+          <div class="feat-row"><div class="feat-check"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5l2.5 2.5L8 3"/></svg></div><div class="feat-text"><strong>Edge cases</strong>Boundary conditions and unusual inputs from comments and acceptance criteria.</div></div>
+          <div class="feat-row"><div class="feat-check"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5l2.5 2.5L8 3"/></svg></div><div class="feat-text"><strong>Negative scenarios</strong>Invalid inputs, permission errors, and failure states that are easy to forget.</div></div>
+          <div class="feat-row"><div class="feat-check"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5l2.5 2.5L8 3"/></svg></div><div class="feat-text"><strong>Scenario Outline</strong>Data-driven tests with Examples tables for parameterised cases.</div></div>
+        </div>
+      </div>
+      <div class="reveal d1">
+        <div class="gherkin-wrap">
+          <div class="gherkin-top"><span class="gherkin-file">PROJ-247.feature</span><span class="gherkin-badge">AI GENERATED</span></div>
+          <div class="gherkin-body">
+<span class="gh-tag">@PROJ-247 @authentication</span><br>
+<span class="gh-kw">Feature:</span> User Login<br>
+<br>
+&nbsp;&nbsp;<span class="gh-kw">Background:</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="gh-step">Given</span> the login page is open<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="gh-step">And</span> the user is not authenticated<br>
+<br>
+&nbsp;&nbsp;<span class="gh-kw">Scenario:</span> Successful login<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="gh-step">When</span> user enters valid credentials<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="gh-step">And</span> clicks <span class="gh-val">"Sign In"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="gh-step">Then</span> user is redirected to dashboard<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="gh-step">And</span> session token is stored<br>
+<br>
+&nbsp;&nbsp;<span class="gh-kw">Scenario:</span> Wrong password<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="gh-step">When</span> user enters incorrect password<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="gh-step">Then</span> error <span class="gh-val">"Invalid credentials"</span> appears<br>
+<br>
+&nbsp;&nbsp;<span class="gh-kw">Scenario Outline:</span> Account lockout<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="gh-step">When</span> user fails login <span class="gh-val">&lt;attempts&gt;</span> times<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="gh-step">Then</span> account locked for <span class="gh-val">&lt;duration&gt;</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="gh-kw">Examples:</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gh-val">| attempts | duration |</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gh-val">| 5        | 15 min   |</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="gh-val">| 10       | 60 min   |</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt" id="architecture">
+  <div class="section-inner">
+    <div class="eyebrow reveal">Architecture</div>
+    <h2 class="section-title reveal">Three pluggable layers.<br><em>Extend without rewriting.</em></h2>
+    <p class="section-lead reveal">Every component is an abstract interface. The generator never knows which provider is underneath.</p>
+    <div class="arch-grid">
+      <div class="arch-card reveal" style="--card-top:#1a56db;--card-color:#1a56db"><div class="arch-layer">Layer 01</div><h3>Triggers</h3><p>Define when and which tasks to process. Polling reads the Jira changelog to detect field-level changes.</p><ul class="arch-items"><li>PollingTrigger - cron, every 30 min</li><li>ManualTrigger - all tasks or by key</li><li>watch_fields: summary / description / comment</li><li>Extend via BaseTrigger</li></ul></div>
+      <div class="arch-card reveal d1" style="--card-top:#7c3aed;--card-color:#7c3aed"><div class="arch-layer" style="color:#7c3aed">Layer 02</div><h3>LLM Client</h3><p>One config line to switch AI providers. All implement the same generate() interface - the rest of the system is unaffected.</p><ul class="arch-items" style="--card-color:#7c3aed"><li>AnthropicLLMClient</li><li>OpenAILLMClient</li><li>AzureOpenAILLMClient</li><li>Exponential backoff on rate limits</li></ul></div>
+      <div class="arch-card reveal d2" style="--card-top:#047857;--card-color:#047857"><div class="arch-layer" style="color:#047857">Layer 03</div><h3>Outputs</h3><p>Enable any combination simultaneously. Results go exactly where your team needs them.</p><ul class="arch-items" style="--card-color:#047857"><li>JiraOutput - create / upsert / skip</li><li>FileOutput - .feature files</li><li>SlackOutput - post to channel</li><li>SlackNotification - event alerts</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="outputs">
+  <div class="section-inner">
+    <div class="eyebrow reveal">Outputs</div>
+    <h2 class="section-title reveal">Where the Gherkin lands.</h2>
+    <p class="section-lead reveal">Enable multiple outputs at once. All run in parallel for each processed task.</p>
+    <div class="outputs-grid">
+      <div class="out-card reveal"><div class="out-icon" style="background:var(--blue-lt)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a56db" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div><h4>Jira Subtask</h4><p>Creates "Test Cases: {summary}" as a subtask. Three modes adapt to your team's workflow.</p><div class="out-modes"><div class="out-mode"><div class="mode-pip" style="background:#16a34a"></div>create - always new</div><div class="out-mode"><div class="mode-pip" style="background:#d97706"></div>upsert - update if exists</div><div class="out-mode"><div class="mode-pip" style="background:#1a56db"></div>skip_if_exists - preserve edits</div></div></div>
+      <div class="out-card reveal d1"><div class="out-icon" style="background:#f0fdf4"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><h4>.feature Files</h4><p>Saves Gherkin to <code style="font-family:var(--mono);font-size:11px;background:var(--surface);padding:1px 5px;border-radius:3px">{issue_key}.feature</code> in a configured path. Works with Cucumber and Behave.</p><div class="out-modes"><div class="out-mode"><div class="mode-pip" style="background:#16a34a"></div>Configurable output path</div><div class="out-mode"><div class="mode-pip" style="background:#16a34a"></div>Directories auto-created</div></div></div>
+      <div class="out-card reveal d2"><div class="out-icon" style="background:#fffbeb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><h4>Slack</h4><p>Posts to your QA channel via Incoming Webhook. Full Gherkin or a summary link - configurable per team.</p><div class="out-modes"><div class="out-mode"><div class="mode-pip" style="background:#d97706"></div>post_gherkin: true / false</div><div class="out-mode"><div class="mode-pip" style="background:#d97706"></div>Separate notification channel</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt" id="providers">
+  <div class="section-inner">
+    <div class="providers-split">
+      <div>
+        <div class="eyebrow reveal">LLM Providers</div>
+        <h2 class="section-title reveal">One line to<br><em>switch AI providers.</em></h2>
+        <p class="section-lead reveal" style="margin-bottom:28px">Change <code style="font-family:var(--mono);font-size:12px;background:var(--surface);padding:2px 6px;border-radius:4px">llm.provider</code> in config.yml. No code changes required.</p>
+        <div class="provider-cards reveal">
+          <div class="prov-card rec"><div style="width:32px;height:32px;background:rgba(26,86,219,.1);border-radius:6px;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a56db" stroke-width="1.8"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><span class="prov-name">Anthropic</span><span class="prov-model">claude-sonnet-4</span><span class="prov-rec">Recommended</span></div>
+          <div class="prov-card"><div style="width:32px;height:32px;background:var(--surface);border-radius:6px;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><span class="prov-name">OpenAI</span><span class="prov-model">gpt-4o</span></div>
+          <div class="prov-card"><div style="width:32px;height:32px;background:var(--surface);border-radius:6px;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><span class="prov-name">Azure OpenAI</span><span class="prov-model">Custom deployment</span></div>
+        </div>
+        <div class="checklist reveal">
+          <div class="check-item"><div class="ci-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5l2.5 2.5L8 3"/></svg></div>Auto-retry with exponential backoff on rate limits</div>
+          <div class="check-item"><div class="ci-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5l2.5 2.5L8 3"/></svg></div>health_check() validates credentials on startup</div>
+          <div class="check-item"><div class="ci-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5l2.5 2.5L8 3"/></svg></div>Clear error message when API key is missing</div>
+          <div class="check-item"><div class="ci-icon"><svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 5l2.5 2.5L8 3"/></svg></div>Add a custom provider in ~20 lines of Python</div>
+        </div>
+      </div>
+      <div class="reveal d1">
+        <div class="code-block">
+          <div class="cb-top"><div class="cb-dots"><span style="background:#f87171"></span><span style="background:#fbbf24"></span><span style="background:#34d399"></span></div><span class="cb-file">config.yml</span></div>
+          <div class="cb-body"><pre><span class="cc"># Switch provider with one line</span>
+<span class="ck">llm</span>:
+  <span class="cn">provider</span>: <span class="cv">anthropic</span>
+  <span class="cn">model</span>: <span class="cs">claude-sonnet-4-20250514</span>
+  <span class="cn">temperature</span>: <span class="cv">0</span>
+
+<span class="ck">triggers</span>:
+  <span class="ck">polling</span>:
+    <span class="cn">enabled</span>: <span class="cv">true</span>
+    <span class="cn">interval_minutes</span>: <span class="cv">35</span>
+    <span class="cn">watch_fields</span>: [<span class="cs">summary</span>, <span class="cs">description</span>, <span class="cs">comment</span>]
+
+<span class="ck">outputs</span>:
+  <span class="ck">jira</span>:
+    <span class="cn">enabled</span>: <span class="cv">true</span>
+    <span class="cn">mode</span>: <span class="cs">upsert</span>
+  <span class="ck">slack</span>:
+    <span class="cn">enabled</span>: <span class="cv">true</span>
+    <span class="cn">channel</span>: <span class="cs">"#qa-test-cases"</span>
+
+<span class="ck">notifications</span>:
+  <span class="ck">slack</span>:
+    <span class="cn">enabled</span>: <span class="cv">true</span>
+    <span class="cn">channel</span>: <span class="cs">"#qa-alerts"</span>
+    <span class="cn">notify_on</span>: [<span class="cs">generated</span>, <span class="cs">error</span>]</pre></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="eyebrow reveal">Get started</div>
+    <h2 class="reveal">Ship test coverage<br><em>without the overhead.</em></h2>
+    <p class="reveal">Clone the repo, add your API keys, push to GitHub. Specter takes over from there.</p>
+    <div class="cta-actions reveal">
+      <a href="docs.html" class="btn-cta-white">Read the docs <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      <!-- <a href="https://github.com/your-org/specter" class="btn-ghost-white"><svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>GitHub</a> -->
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <a href="index.html" class="footer-brand"><div class="footer-mark"><svg viewBox="0 0 12 12" fill="none"><path d="M6 1L10 3.5v5L6 11 2 8.5v-5L6 1z" stroke="white" stroke-width="1.1"/><circle cx="6" cy="6" r="1.2" fill="white"/></svg></div><span class="footer-name">Specter</span></a>
+    <!-- <div class="footer-links"><a href="index.html">Home</a><a href="docs.html">Documentation</a><a href="https://github.com/your-org/specter">GitHub</a></div> -->
+  </div>
+</footer>
+
+<script>
+const els=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver(entries=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('in'),i*60);obs.unobserve(e.target)}})},{threshold:.07});
+els.forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
